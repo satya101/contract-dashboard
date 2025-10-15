@@ -13,8 +13,8 @@ export default function ContractDashboard() {
     formData.append('file', uploadedFile);
 
     try {
-      const response = await fetch('https://contract-backend-production-4875.up.railway.app/docs#/default/upload_contract_upload_post', {
-        method: 'POST',
+      const response = await fetch("https://contract-backend-production-abf2.up.railway.app/upload", {
+        method: "POST",
         body: formData,
       });
 
