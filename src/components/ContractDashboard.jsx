@@ -7,9 +7,38 @@ export default function ContractDashboard() {
   const [contracts, setContracts] = useState([]);
   const [auditLogs, setAuditLogs] = useState([]);
 
-  const handleFileUpload = (event) => {
+  const handleFileUpload = async (event) => {
     const uploadedFile = event.target.files[0];
-    console.log('Uploaded:', uploadedFile);
+    const formData = new FormData();
+    formData.append('file', uploadedFile);
+
+    try {
+      const response = await fetch('https://contract-backend-production-4875.up.railway.app/docs#/default/upload_contract_upload_post', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) throw new Error('Upload failed');
+
+      const data = await response.json();
+      const newContract = {
+        name: uploadedFile.name,
+        summary: data.summary || 'No summary returned',
+      };
+
+      setContracts((prev) => [...prev, newContract]);
+      setAuditLogs((prev) => [
+        ...prev,
+        {
+          timestamp: new Date().toISOString(),
+          action: `Uploaded contract: ${uploadedFile.name}`,
+          user: 'CurrentUser',
+        },
+      ]);
+    } catch (error) {
+      console.error('Upload error:', error);
+      alert('Failed to upload and process contract.');
+    }
   };
 
   return (
